@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chicago Tech Scene Navigator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --chicago-blue: #003087;
+    --chicago-red: #E4002B;
+    --white: #FAFAF8;
+    --off-white: #F0EDE6;
+    --dark: #0A0A0A;
+    --mid: #1A1A1A;
+    --steel: #2C2C2C;
+    --muted: #6B6B6B;
+    --border: rgba(255,255,255,0.08);
+    --accent-gold: #C9A84C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 6vw 8vh;
+    overflow: hidden;
+    background: var(--dark);
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 40%, rgba(0,48,135,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(228,0,43,0.15) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0;
+  }
+
+  .hero-skyline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 38vh;
+    z-index: 1;
+    opacity: 0.07;
+  }
+
+  .flag-stripe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--chicago-blue) 33%, var(--white) 33% 66%, var(--chicago-red) 66%);
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    position: relative;
+    z-index: 3;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    color: var(--chicago-red);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    position: relative;
+    z-index: 3;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 12vw, 10rem);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    color: var(--white);
+    margin-bottom: 2rem;
+  }
+
+  .hero-title .city {
+    color: var(--chicago-blue);
+    -webkit-text-stroke: 2px var(--chicago-blue);
+    color: transparent;
+    display: block;
+  }
+
+  .hero-subtitle {
+    position: relative;
+    z-index: 3;
+    max-width: 520px;
+    font-size: 1.05rem;
+    color: rgba(250,250,248,0.65);
+    margin-bottom: 3rem;
+    line-height: 1.7;
+  }
+
+  .hero-meta {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-author {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .hero-author span { color: var(--white); }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: var(--chicago-red);
+    color: var(--white);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #c0001f; transform: translateY(-2px); }
+
+  .btn-outline {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--white);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--white); transform: translateY(-2px); }
+
+  /* ── NAV ── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .sticky-nav::-webkit-scrollbar { display: none; }
+
+  .nav-inner {
+    display: flex;
+    gap: 0;
+    padding: 0 6vw;
+    min-width: max-content;
+  }
+
+  .nav-inner a {
+    display: block;
+    padding: 1rem 1.2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-inner a:hover { color: var(--white); border-bottom-color: var(--chicago-red); }
+
+  /* ── SECTIONS ── */
+  section {
+    padding: 7rem 6vw;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--chicago-red);
+    margin-bottom: 1.2rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+
+  .section-lead {
+    max-width: 640px;
+    color: rgba(250,250,248,0.6);
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── WHY CHICAGO ── */
+  #why { background: var(--mid); }
+
+  .facts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 4rem;
+  }
+
+  .fact-card {
+    background: var(--mid);
+    padding: 1.6rem 1.8rem;
+    transition: background 0.2s;
+  }
+  .fact-card:hover { background: var(--steel); }
+
+  .fact-card p {
+    font-size: 0.88rem;
+    color: rgba(250,250,248,0.75);
+    line-height: 1.55;
+  }
+
+  .fact-card p strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .fact-card .fact-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--chicago-red);
+    border-radius: 50%;
+    margin-bottom: 0.9rem;
+  }
+
+  .inventions-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .invention-pill {
+    background: rgba(0,48,135,0.12);
+    border: 1px solid rgba(0,48,135,0.3);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.82rem;
+    color: rgba(250,250,248,0.8);
+    line-height: 1.4;
+  }
+
+  /* ── TABLES ── */
+  .data-table-wrap { overflow-x: auto; }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .data-table thead th {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 1.2rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .data-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  .data-table tbody td {
+    padding: 1.1rem 1.2rem;
+    vertical-align: top;
+    color: rgba(250,250,248,0.8);
+    line-height: 1.5;
+  }
+
+  .data-table tbody td:first-child {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .data-table a {
+    color: var(--chicago-blue);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(0,48,135,0.4);
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .data-table a:hover { color: #5580c8; border-bottom-color: #5580c8; }
+
+  /* ── TAGS / LIST PILLS ── */
+  .pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: rgba(250,250,248,0.75);
+    text-decoration: none;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .pill:hover { border-color: rgba(255,255,255,0.35); color: var(--white); }
+
+  /* ── CARDS GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .card {
+    background: var(--dark);
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: background 0.2s;
+  }
+  .card:hover { background: var(--mid); }
+
+  .card-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--white);
+  }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: rgba(250,250,248,0.55);
+    line-height: 1.55;
+    flex: 1;
+  }
+
+  .card-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--chicago-red);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+  }
+  .card-link::after { content: '↗'; }
+  .card-link:hover { color: #ff3355; }
+
+  /* ── MEDIA SECTION ── */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .media-item {
+    background: var(--dark);
+    padding: 1.5rem 1.8rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: background 0.2s;
+  }
+  .media-item:hover { background: var(--mid); }
+
+  .media-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+  }
+
+  .media-item a {
+    display: block;
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+  }
+  .media-item a:hover { color: var(--chicago-red); }
+
+  /* ── PEOPLE ── */
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .person-item a {
+    display: block;
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--border);
+    color: rgba(250,250,248,0.75);
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .person-item a:hover {
+    border-color: rgba(255,255,255,0.25);
+    color: var(--white);
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* ── DIVIDERS / SUBHEADS ── */
+  .subhead {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    margin: 3rem 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .subhead::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── CTA BANNER ── */
+  .cta-banner {
+    background: var(--chicago-blue);
+    padding: 5rem 6vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .cta-banner h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .cta-banner p {
+    max-width: 400px;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin-top: 0.8rem;
+  }
+
+  .cta-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 6vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    color: var(--white);
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    section { padding: 4rem 5vw; }
+    .hero { padding: 0 5vw 6vh; }
+    .cta-banner { padding: 3.5rem 5vw; }
+    footer { padding: 2.5rem 5vw; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow { animation: fadeUp 0.6s ease both; }
+  .hero-title   { animation: fadeUp 0.6s 0.12s ease both; }
+  .hero-subtitle{ animation: fadeUp 0.6s 0.22s ease both; }
+  .hero-meta    { animation: fadeUp 0.6s 0.32s ease both; }
+
+  /* Search */
+  .search-wrap {
+    position: relative;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+  .search-wrap input {
+    width: 100%;
+    padding: 0.85rem 1.2rem 0.85rem 2.8rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: rgba(255,255,255,0.3); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  /* tag chip */
+  .tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: rgba(228,0,43,0.12);
+    border: 1px solid rgba(228,0,43,0.25);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--chicago-red);
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+  }
+
+  .back-to-top {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    margin-top: 3rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .back-to-top:hover { color: var(--white); border-color: var(--white); }
+
+  /* star accent */
+  .star {
+    color: var(--chicago-red);
+    font-family: 'DM Mono', monospace;
+    margin: 0 0.1rem;
+  }
+</style>
+</head>
+<body id="top">
+
+<!-- HERO -->
+<section class="hero" id="hero" style="padding-top:0">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <!-- Chicago skyline silhouette -->
+  <svg class="hero-skyline" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax meet" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 300V240h20v-40h10v-20h10v20h10v-80h8v-10h4v10h8v80h20v-120h10v-20h4v-30h4v30h4v20h10v120h10v-90h6v-20h8v20h6v90h15v-60h4v-40h4v-10h8v10h4v40h4v60h10v-180h6v-40h4v-20h4v20h4v40h6v180h8v-100h4v-20h4v20h4v100h20v-140h10v-50h6v-80h6v80h6v50h10v140h10v-60h4v-40h6v40h4v60h20v-200h8v-40h4v-20h6v20h4v40h8v200h10v-120h6v-30h8v30h6v120h15v-80h6v-20h4v20h6v80h10v-160h6v-40h4v-20h4v20h4v40h6v160h10v-90h4v-30h8v30h4v90h20v-110h8v-50h6v50h8v110h10v-70h6v-20h4v20h6v70h10v-130h4v-50h8v50h4v130h15v-60h6v60h10v-170h6v-40h4v40h6v170h10v-100h4v-30h8v30h4v100h20V300H0z"/>
+  </svg>
+
+  <div class="flag-stripe"></div>
+
+  <p class="hero-eyebrow">Chicago <span class="star">✶</span> Est. 1837 <span class="star">✶</span> Updated Mar 2026</p>
+  <h1 class="hero-title">
+    Tech Scene<br>
+    <span class="city">Navigator</span>
+  </h1>
+  <p class="hero-subtitle">Your compass for Chicago's innovation economy. A living guide for early-stage founders to tap into the right tools, networks, and opportunities across the city.</p>
+  <div class="hero-meta">
+    <a href="https://www.landonsloop.com" target="_blank" class="btn-primary">Subscribe to Landon's Loop</a>
+    <a href="#vc" class="btn-outline">Explore the Guide ↓</a>
+    <p class="hero-author">By <span>Landon W. Campbell</span> — Drive Capital Chicago</p>
+  </div>
+</section>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#why">Why Chicago</a>
+    <a href="#vc">Venture Capital</a>
+    <a href="#angels">Angel Syndicates</a>
+    <a href="#communities">Communities</a>
+    <a href="#accelerators">Accelerators</a>
+    <a href="#coworking">Co-Working</a>
+    <a href="#events">Events</a>
+    <a href="#econdev">Econ Dev</a>
+    <a href="#hiring">Hiring</a>
+    <a href="#media">Media</a>
+    <a href="#research">Research</a>
+    <a href="#people">People to Follow</a>
+  </div>
+</nav>
+
+<!-- WHY CHICAGO -->
+<section id="why">
+  <p class="section-label">01 — The Case for Chicago</p>
+  <h2 class="section-title">Why Chicago?</h2>
+  <p class="section-lead">Chicago is a city unlike any other — third largest in the US, home to a diverse economy where no single industry takes more than 13% share. Build anything here. Hire top talent at cost-efficient rates. And do it surrounded by one of the most supportive founder communities in the country.</p>
+
+  <p class="subhead">Fast Facts</p>
+  <div class="facts-grid">
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#1</strong> city for nuclear energy</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#1</strong> city for women founders</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#1</strong> for corporate HQ relocation</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#2</strong> largest manufacturing hub nationally</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#2</strong> largest number of Fortune 500s in the US</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#2</strong> top destination for recent graduates nationally</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#3</strong> US metro by GDP — <strong>#7</strong> in the world</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#3</strong> concentration of data centers in the US</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#3</strong> largest AI talent pipeline for core AI majors</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#3</strong> for universities with quantum programs</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p><strong>#3</strong> largest concentration of CS degrees nationally</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p>Building <strong>America's first-ever quantum campus</strong></p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p>Home to the world's most powerful <strong>AI supercomputer</strong></p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p>Home to <strong>Tempus</strong>, world's largest AI precision medicine company</p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p>Home to the world's <strong>largest futures &amp; derivatives exchange</strong></p></div>
+    <div class="fact-card"><div class="fact-dot"></div><p>Meeting point for every rail in America — <strong>25% of US freight</strong> passes through</p></div>
+  </div>
+
+  <p class="subhead">Notable Chicago Inventions</p>
+  <div class="inventions-row">
+    <div class="invention-pill">🏙️ First skyscraper</div>
+    <div class="invention-pill">⚛️ First nuclear reactor</div>
+    <div class="invention-pill">📱 First mobile phone</div>
+    <div class="invention-pill">🧠 First paper on neural networks</div>
+    <div class="invention-pill">📻 First in-car radio</div>
+    <div class="invention-pill">💡 First large-scale electrical lighting (Tesla)</div>
+    <div class="invention-pill">🎬 Film's original birthplace</div>
+    <div class="invention-pill">🎷 Jazz music created here</div>
+    <div class="invention-pill">🎵 House music created here</div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- VENTURE CAPITAL -->
+<section id="vc" style="background: var(--dark);">
+  <p class="section-label">02 — Capital</p>
+  <h2 class="section-title">Venture Capital Firms</h2>
+  <p class="section-lead">60+ venture firms actively investing in Chicago and the Midwest. From pre-seed through growth. Want your firm added? Email <a href="mailto:landon@drivecapital.com" style="color:var(--chicago-red);text-decoration:none">landon@drivecapital.com</a>.</p>
+
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="vc-search" placeholder="Search firms, focus areas…" oninput="filterTable('vc-table', this.value)">
+  </div>
+
+  <div class="data-table-wrap">
+    <table class="data-table" id="vc-table">
+      <thead>
+        <tr>
+          <th>Firm</th>
+          <th>Focus</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Drive Capital <span class="tag">Drive</span></td><td>$2.2B pre-seed to pre-IPO technology focused venture firm actively investing in market-defining companies.</td><td><a href="https://drivecapital.com" target="_blank">drivecapital.com</a></td></tr>
+        <tr><td>Hyde Park Venture Partners</td><td>Early-stage firm focused on high-growth, mid-continent technology startups.</td><td><a href="https://www.hydeparkvp.com" target="_blank">hydeparkvp.com</a></td></tr>
+        <tr><td>Cleveland Ave</td><td>Food and beverage, lifestyle consumer brands, AgTech, and technology.</td><td><a href="https://www.clevelandavenue.com" target="_blank">clevelandavenue.com</a></td></tr>
+        <tr><td>Tech Nexus Venture Collaborative</td><td>Helps corporations and entrepreneurs develop mutually beneficial relationships.</td><td><a href="https://technexus.com" target="_blank">technexus.com</a></td></tr>
+        <tr><td>Lightbank</td><td>Seed, Series A, and late-stage investments.</td><td><a href="https://www.lightbank.com" target="_blank">lightbank.com</a></td></tr>
+        <tr><td>Valor</td><td>Series A to operational growth.</td><td><a href="https://www.valorep.com" target="_blank">valorep.com</a></td></tr>
+        <tr><td>Chain Vision</td><td>Public and permissionless blockchain infrastructure for sovereign global coordination.</td><td><a href="https://www.chainvision.xyz" target="_blank">chainvision.xyz</a></td></tr>
+        <tr><td>Alumni Ventures</td><td>Fintech, AI, cybersecurity, healthtech, food and agriculture.</td><td><a href="https://www.av.vc" target="_blank">av.vc</a></td></tr>
+        <tr><td>Giant Step</td><td>Early stage deep tech — aerospace and space startups.</td><td><a href="https://giantstep.vc" target="_blank">giantstep.vc</a></td></tr>
+        <tr><td>11 Tribes</td><td>Purpose-driven entrepreneurs disrupting legacy industries.</td><td><a href="https://11tribes.vc" target="_blank">11tribes.vc</a></td></tr>
+        <tr><td>M25</td><td>Early-stage, Midwest-only investments.</td><td><a href="https://m25vc.com" target="_blank">m25vc.com</a></td></tr>
+        <tr><td>Jump Capital</td><td>Fintech, crypto, IT and data infrastructure, future of work.</td><td><a href="https://jumpcap.com" target="_blank">jumpcap.com</a></td></tr>
+        <tr><td>Permanent Capital</td><td>Post-PMF B2B SaaS.</td><td><a href="https://www.permanent-capital.com" target="_blank">permanent-capital.com</a></td></tr>
+        <tr><td>Bluestein Ventures</td><td>Early stage future of food.</td><td><a href="https://www.bluesteinventures.com" target="_blank">bluesteinventures.com</a></td></tr>
+        <tr><td>Starting Line</td><td>Early stage consumer startups and brands.</td><td><a href="https://www.startingline.vc" target="_blank">startingline.vc</a></td></tr>
+        <tr><td>Barrel Ventures</td><td>Early stage food ecosystem.</td><td><a href="https://www.barrelvc.com" target="_blank">barrelvc.com</a></td></tr>
+        <tr><td>Create Health Ventures</td><td>$21M fund — early-stage B2B digital health.</td><td><a href="https://www.createhealth.vc" target="_blank">createhealth.vc</a></td></tr>
+        <tr><td>Harper Court Ventures</td><td>Transformative technologies from the University of Chicago.</td><td><a href="https://harpercourt.vc" target="_blank">harpercourt.vc</a></td></tr>
+        <tr><td>Arch Venture Partners</td><td>Seed/early-stage — IT, life sciences, physical sciences.</td><td><a href="https://www.archventure.com" target="_blank">archventure.com</a></td></tr>
+        <tr><td>7Wire Ventures</td><td>Early stage healthcare.</td><td><a href="https://www.7wireventures.com" target="_blank">7wireventures.com</a></td></tr>
+        <tr><td>Distributed Ventures</td><td>Insurtech, fintech, health and benefits.</td><td><a href="https://www.distributedvc.com" target="_blank">distributedvc.com</a></td></tr>
+        <tr><td>Sandbox Industries</td><td>Seed to growth — healthcare, insurance, food and agriculture.</td><td><a href="http://sandboxindustries.com" target="_blank">sandboxindustries.com</a></td></tr>
+        <tr><td>Velveteen Ventures</td><td>Children and planet focused — next seven generations.</td><td><a href="https://www.velveteen.vc" target="_blank">velveteen.vc</a></td></tr>
+        <tr><td>Capitalize VC</td><td>Commerce enablement and consumer brands.</td><td><a href="https://www.capitalizevc.com" target="_blank">capitalizevc.com</a></td></tr>
+        <tr><td>Chicago Ventures</td><td>Leading seed investments in overlooked teams.</td><td><a href="https://www.chicagoventures.com" target="_blank">chicagoventures.com</a></td></tr>
+        <tr><td>HPA</td><td>Early-stage firm in the Midwest.</td><td><a href="https://www.chicagoventures.com" target="_blank">chicagoventures.com</a></td></tr>
+        <tr><td>Nomadic Ventures</td><td>Early stage climate tech — decarbonizing mining, manufacturing, and transportation.</td><td><a href="https://nomadicvp.com" target="_blank">nomadicvp.com</a></td></tr>
+        <tr><td>Nameless Ventures</td><td>Seed and Series A — Midwest-based technology companies.</td><td><a href="https://namelessventures.com" target="_blank">namelessventures.com</a></td></tr>
+        <tr><td>Velocity Catalyst Fund</td><td>Early-stage founders and emerging fund managers in Chicago and Illinois.</td><td><a href="https://velocityinitiative.com" target="_blank">velocityinitiative.com</a></td></tr>
+        <tr><td>Impact Engine</td><td>Economic opportunity, environmental sustainability, and health equity.</td><td><a href="https://www.theimpactengine.com" target="_blank">theimpactengine.com</a></td></tr>
+        <tr><td>81 Collection</td><td>The founders fund for un-sexy industries.</td><td><a href="https://www.81collection.com" target="_blank">81collection.com</a></td></tr>
+        <tr><td>Energy Capital Ventures</td><td>Early-stage sustainability and digital transformation of the natural gas industry.</td><td><a href="https://www.energycapitalventures.com" target="_blank">energycapitalventures.com</a></td></tr>
+        <tr><td>SNAK VC</td><td>Early-stage marketplace investors.</td><td><a href="https://snak.vc" target="_blank">snak.vc</a></td></tr>
+        <tr><td>KB Partners</td><td>Sports and technology intersection.</td><td><a href="https://kbpartners.com" target="_blank">kbpartners.com</a></td></tr>
+        <tr><td>Listen Ventures</td><td>Venture and culture intersection.</td><td><a href="https://www.listen.co" target="_blank">listen.co</a></td></tr>
+        <tr><td>Moderne Ventures</td><td>Real estate, mortgage, finance, insurance, and home services.</td><td><a href="https://www.moderneventures.com" target="_blank">moderneventures.com</a></td></tr>
+        <tr><td>OCA Ventures</td><td>Early stage — technology and scalable services with dramatic growth potential.</td><td><a href="https://www.ocaventures.com" target="_blank">ocaventures.com</a></td></tr>
+        <tr><td>Consumer Ventures</td><td>Next generation consumer brands, products, and enabling technologies.</td><td><a href="http://consumer.vc" target="_blank">consumer.vc</a></td></tr>
+        <tr><td>The Josephine Collective</td><td>Women-led investment group funding visionary founders across the US.</td><td><a href="https://joinjosephine.com" target="_blank">joinjosephine.com</a></td></tr>
+        <tr><td>New Stack Ventures</td><td>Early stage — remarkable founders.</td><td><a href="https://www.newstack.com" target="_blank">newstack.com</a></td></tr>
+        <tr><td>Fifth Star Funds</td><td>Equitable access to Friends &amp; Family capital for underrepresented founders.</td><td><a href="https://www.fifthstarfunds.com" target="_blank">fifthstarfunds.com</a></td></tr>
+        <tr><td>Illinois INVENT</td><td>$114M direct equity capital via US Treasury SSBCI program.</td><td><a href="https://dceo.illinois.gov/illinoisinvent.html" target="_blank">dceo.illinois.gov</a></td></tr>
+        <tr><td>Chicago Early</td><td>Seed-stage startups, Chicago-focused.</td><td><a href="https://chicagoearly.com" target="_blank">chicagoearly.com</a></td></tr>
+        <tr><td>Dundee VC</td><td>Pre-seed and seed — fintech, supply chain and logistics, commerce.</td><td><a href="https://dundeeventurecapital.com" target="_blank">dundeeventurecapital.com</a></td></tr>
+        <tr><td>Portal Innovations</td><td>Life sciences VC with crafted capital for breakthroughs.</td><td><a href="https://www.portalinnovations.com" target="_blank">portalinnovations.com</a></td></tr>
+        <tr><td>Origin Ventures</td><td>Early-stage software, consumer, and marketplace — Digital Native economy.</td><td><a href="https://www.originventures.com" target="_blank">originventures.com</a></td></tr>
+        <tr><td>LongJump Ventures</td><td>First-check fund — Chicago-focused, next generation of founders.</td><td><a href="https://longjump.vc" target="_blank">longjump.vc</a></td></tr>
+        <tr><td>Magnetar AI Ventures Fund</td><td>Early-to-growth stage companies advancing generative AI.</td><td><a href="http://magnetar.com" target="_blank">magnetar.com</a></td></tr>
+        <tr><td>Tawani Ventures</td><td>Generalist early stage — Chicago and diverse founding teams.</td><td><a href="https://tawaniventures.com" target="_blank">tawaniventures.com</a></td></tr>
+        <tr><td>Lofty Ventures</td><td>Software and technology sectors.</td><td><a href="https://loftyventures.com" target="_blank">loftyventures.com</a></td></tr>
+        <tr><td>Vitalize Venture Capital</td><td>Pre-seed and seed WorkTech.</td><td><a href="https://www.vitalize.vc" target="_blank">vitalize.vc</a></td></tr>
+        <tr><td>Off Center Ventures</td><td>Early stage at the intersection of tech and media.</td><td><a href="https://www.offcenter.vc" target="_blank">offcenter.vc</a></td></tr>
+        <tr><td>High Alpha</td><td>B2B SaaS.</td><td><a href="https://www.highalpha.com" target="_blank">highalpha.com</a></td></tr>
+        <tr><td>Supply Change</td><td>Early-stage at the intersection of food, culture, and technology.</td><td><a href="https://supplychange.fund" target="_blank">supplychange.fund</a></td></tr>
+        <tr><td>53 Stations</td><td>Healthcare, logistics, technology, and insurance.</td><td><a href="https://www.53stations.com" target="_blank">53stations.com</a></td></tr>
+        <tr><td>New Leaf Ventures</td><td>Multi-strategy early-stage venture portfolio.</td><td><a href="https://www.newleafinvest.com" target="_blank">newleafinvest.com</a></td></tr>
+        <tr><td>EverPresent Ventures</td><td>Future of scalable commerce.</td><td><a href="https://www.everpresentventures.com" target="_blank">everpresentventures.com</a></td></tr>
+        <tr><td>Chingona Ventures</td><td>Founders in growth markets that are often overlooked.</td><td><a href="https://www.chingona.ventures" target="_blank">chingona.ventures</a></td></tr>
+        <tr><td>Propellant Ventures</td><td>Seed — healthcare, future of work, supply chain, fintech, edtech.</td><td><a href="http://www.propellant.vc" target="_blank">propellant.vc</a></td></tr>
+        <tr><td>Plug and Play</td><td>Stage-agnostic global firm with large corporate innovation network.</td><td><a href="https://www.plugandplaytechcenter.com" target="_blank">plugandplaytechcenter.com</a></td></tr>
+        <tr><td>Motivate Ventures</td><td>Pre-seed and seed startups.</td><td><a href="https://motivate.vc" target="_blank">motivate.vc</a></td></tr>
+        <tr><td>DRW VC</td><td>Stage-agnostic — financial and enterprise technology.</td><td><a href="https://drw.com/vc" target="_blank">drw.com/vc</a></td></tr>
+        <tr><td>Bridge Ventures</td><td>Early stage companies looking to solve big problems.</td><td><a href="https://www.bridgeventures.com" target="_blank">bridgeventures.com</a></td></tr>
+        <tr><td>CMT Digital</td><td>Backing extraordinary founders building on the frontier of blockchain innovation.</td><td><a href="https://cmt.digital" target="_blank">cmt.digital</a></td></tr>
+        <tr><td>Dipalo Ventures</td><td>Advanced Manufacturing across Energy, Climate, and Physical AI.</td><td><a href="https://dipaloventures.com" target="_blank">dipaloventures.com</a></td></tr>
+        <tr><td>Marquee Ventures</td><td>Early-stage venture fund spun out of the ownership group of the Chicago Cubs and other global sports assets.</td><td><a href="https://www.marqueeventures.com" target="_blank">marqueeventures.com</a></td></tr>
+        <tr><td>Tonic Ventures</td><td>Growth capital to build enduring Consumer companies.</td><td><a href="https://www.tonicventures.com" target="_blank">tonicventures.com</a></td></tr>
+        <tr><td>Energize Capital</td><td>Capitalizing the transition to a digitized and decarbonized economy.</td><td><a href="https://www.energizecap.com" target="_blank">energizecap.com</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="margin-top:2rem; font-size:0.82rem; color:var(--muted);">Visual map of Chicago VC firms by Monica Para → <a href="https://www.pampam.city/chicago-venture-capital-map-ivQGP0SP59VkDn0mrzsb" target="_blank" style="color:var(--chicago-red);text-decoration:none;">pampam.city</a></p>
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- ANGEL SYNDICATES -->
+<section id="angels" style="background: var(--mid);">
+  <p class="section-label">03 — Angels</p>
+  <h2 class="section-title">Angel Syndicates</h2>
+  <p class="section-lead">Angel investing collectives and syndicates based in Chicago.</p>
+
+  <div class="pill-list">
+    <a class="pill" href="https://joinjosephine.com" target="_blank">The Josephine Collective</a>
+    <a class="pill" href="https://loftyangels.com" target="_blank">Lofty Angels</a>
+    <a class="pill" href="https://chicagoarchangels.com" target="_blank">Chicago Arch Angels</a>
+    <a class="pill" href="https://www.cicangels.com" target="_blank">CIC Angels</a>
+    <a class="pill" href="https://www.cornerstoneangels.com" target="_blank">Cornerstone Angels</a>
+    <a class="pill" href="https://gust.com/organizations/harvard-business-school-angels-of-chicago" target="_blank">Harvard Angels</a>
+    <a class="pill" href="https://www.heartlandangels.com" target="_blank">Heartland Angels</a>
+    <a class="pill" href="https://irishangels.com" target="_blank">Irish Angels</a>
+    <a class="pill" href="https://www.vitalize.vc/vitalize-angels/" target="_blank">Vitalize Angels</a>
+    <a class="pill" href="https://md-angels.com" target="_blank">MD Angels</a>
+    <a class="pill" href="https://www.illini-angels.com" target="_blank">Illini Angels</a>
+    <a class="pill" href="https://www.hustlefund.vc/squad" target="_blank">Hustle Fund Chicago</a>
+    <a class="pill" href="http://www.westsuburbanangels.com" target="_blank">West Suburban Angels</a>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- FOUNDER COMMUNITIES -->
+<section id="communities" style="background: var(--dark);">
+  <p class="section-label">04 — Network</p>
+  <h2 class="section-title">Founder Communities</h2>
+  <p class="section-lead">Niche communities where Chicago's builders connect, collaborate, and ship.</p>
+
+  <div class="card-grid">
+    <div class="card"><p class="card-name">AI Tinkerers Chicago</p><p class="card-desc">Practitioners with ML and entrepreneurial backgrounds actively building with foundation models and LLMs.</p><a class="card-link" href="https://chicago.tinkerer.ai" target="_blank">chicago.tinkerer.ai</a></div>
+    <div class="card"><p class="card-name">Density</p><p class="card-desc">A high-density hub of top builders and founders in Chicago.</p><a class="card-link" href="https://density.ventures" target="_blank">density.ventures</a></div>
+    <div class="card"><p class="card-name">imnotArt</p><p class="card-desc">Community curating physical and digital NFT exhibitions for artists and innovators.</p><a class="card-link" href="https://www.imnotart.com" target="_blank">imnotart.com</a></div>
+    <div class="card"><p class="card-name">ETHChicago</p><p class="card-desc">Elevating Web3 innovation and entrepreneurship in the Midwest.</p><a class="card-link" href="https://ethchicago.xyz" target="_blank">ethchicago.xyz</a></div>
+    <div class="card"><p class="card-name">Nur House</p><p class="card-desc">Chicago's Muslim Builder Hub.</p><a class="card-link" href="https://nur.house" target="_blank">nur.house</a></div>
+    <div class="card"><p class="card-name">Scratchpad</p><p class="card-desc">Pull up and work on your passion projects.</p><a class="card-link" href="https://lu.ma/scratchpad" target="_blank">lu.ma/scratchpad</a></div>
+    <div class="card"><p class="card-name">CPG Speakeasy</p><p class="card-desc">Connects early stage brands with resources to accelerate their products.</p><a class="card-link" href="https://plan.getpie.app" target="_blank">getpie.app</a></div>
+    <div class="card"><p class="card-name">Founder House</p><p class="card-desc">An exclusive founders-only community built by founders for founders.</p><a class="card-link" href="https://www.founderhousechicago.com" target="_blank">founderhousechicago.com</a></div>
+    <div class="card"><p class="card-name">Operators Guild</p><p class="card-desc">Invitation-only group for the world's top finance and operations leaders in high-growth tech.</p><a class="card-link" href="https://operators-guild.com" target="_blank">operators-guild.com</a></div>
+    <div class="card"><p class="card-name">Omaxn</p><p class="card-desc">'Spotlight on Applied AI' series — translating complex AI into practical business strategies.</p><a class="card-link" href="https://lu.ma/omaxn" target="_blank">lu.ma/omaxn</a></div>
+    <div class="card"><p class="card-name">Genesis</p><p class="card-desc">The largest community of Gen Z entrepreneurs in the Midwest.</p><a class="card-link" href="https://www.joingenesis.org" target="_blank">joingenesis.org</a></div>
+    <div class="card"><p class="card-name">Build Illinois</p><p class="card-desc">Entrepreneurial community at UIUC hosting events for creatives, artists, and founders.</p><a class="card-link" href="https://www.buildillinois.xyz" target="_blank">buildillinois.xyz</a></div>
+    <div class="card"><p class="card-name">Pitch and Run</p><p class="card-desc">Run club for founders.</p><a class="card-link" href="https://lu.ma/i6hy8inr" target="_blank">lu.ma</a></div>
+    <div class="card"><p class="card-name">Data Science Institute</p><p class="card-desc">UChicago talks, workshops, and gatherings sparking new collaborations.</p><a class="card-link" href="https://datascience.uchicago.edu" target="_blank">datascience.uchicago.edu</a></div>
+    <div class="card"><p class="card-name">Northwestern AI Club</p><p class="card-desc">Educating and empowering students to shape the future with AI.</p><a class="card-link" href="https://northwestern-ai-club.vercel.app" target="_blank">northwestern-ai-club.vercel.app</a></div>
+    <div class="card"><p class="card-name">Inside The Loop Meetups</p><p class="card-desc">Bi-weekly coffee meetups for founders in Fulton Market.</p><a class="card-link" href="https://t.me/+nWSm7ZJgUoI3NTMx" target="_blank">Telegram Group</a></div>
+    <div class="card"><p class="card-name">Three Cities Social</p><p class="card-desc">A modern-day social club for adults seeking real connection.</p><a class="card-link" href="https://www.threecitiessocial.com" target="_blank">threecitiessocial.com</a></div>
+    <div class="card"><p class="card-name">Startup Grind Chicago</p><p class="card-desc">Chicago founder community with regular programming and events.</p><a class="card-link" href="https://www.startupgrind.com/chicago/" target="_blank">startupgrind.com</a></div>
+    <div class="card"><p class="card-name">Chicago Data Professionals</p><p class="card-desc">Live events on data topics including Microsoft Azure Data Services.</p><a class="card-link" href="https://www.meetup.com/chicagodataprofessionals" target="_blank">meetup.com</a></div>
+    <div class="card"><p class="card-name">FaithTech</p><p class="card-desc">A global tech community for Christ.</p><a class="card-link" href="https://www.faithtech.com" target="_blank">faithtech.com</a></div>
+    <div class="card"><p class="card-name">Gildre</p><p class="card-desc">International Executive Workshops and in-person events in Chicago.</p><a class="card-link" href="https://www.gildre.com" target="_blank">gildre.com</a></div>
+    <div class="card"><p class="card-name">EdTech Institute of Chicago</p><p class="card-desc">Coffee meetups and events for EdTech founders and investors.</p><a class="card-link" href="https://www.linkedin.com/in/peterpellizzari/" target="_blank">LinkedIn</a></div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- ACCELERATORS -->
+<section id="accelerators" style="background: var(--mid);">
+  <p class="section-label">05 — Programs</p>
+  <h2 class="section-title">Accelerators, Incubators &amp; Programs</h2>
+  <p class="section-lead">Curated startup programs across every stage and sector in Chicago.</p>
+
+  <div class="data-table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Program</th>
+          <th>Focus</th>
+          <th>Website</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Drive Seed Program</td><td>SaaS, AI, Automation</td><td><a href="https://drivecapital.com/seed-program" target="_blank">drivecapital.com/seed-program</a></td></tr>
+        <tr><td>Duality</td><td>Quantum</td><td><a href="https://www.dualityaccelerator.com" target="_blank">dualityaccelerator.com</a></td></tr>
+        <tr><td>LeapYear</td><td>AI and SaaS</td><td><a href="https://www.takeleapyear.com" target="_blank">takeleapyear.com</a></td></tr>
+        <tr><td>Techstars Chicago</td><td>SaaS and deeptech</td><td><a href="https://www.techstars.com/accelerators/chicago" target="_blank">techstars.com</a></td></tr>
+        <tr><td>2112 Chicago</td><td>Music and entertainment-tech</td><td><a href="https://2112inc.com" target="_blank">2112inc.com</a></td></tr>
+        <tr><td>MATTER</td><td>Health</td><td><a href="https://matter.health" target="_blank">matter.health</a></td></tr>
+        <tr><td>mHUB Accelerator</td><td>Hardware and med-tech</td><td><a href="https://www.mhubchicago.com/accelerator" target="_blank">mhubchicago.com</a></td></tr>
+        <tr><td>mHUB Climate</td><td>Climate and energy tech</td><td><a href="https://www.mhubchicago.com/climatetech-energy-tech-accelerator" target="_blank">mhubchicago.com</a></td></tr>
+        <tr><td>Polsky Center Transform</td><td>16-week program — AI and deep tech at UChicago</td><td><a href="https://polsky.uchicago.edu/programs-events/transform/" target="_blank">polsky.uchicago.edu</a></td></tr>
+        <tr><td>Gener8tor</td><td>Sustainability, carbon removal, EdTech</td><td><a href="https://www.gener8tor.com" target="_blank">gener8tor.com</a></td></tr>
+        <tr><td>TechRise</td><td>Weekly pitch competitions for early-stage founders to access capital and networks</td><td><a href="https://techrise.co/apply/" target="_blank">techrise.co</a></td></tr>
+        <tr><td>Food Foundry</td><td>Food-tech</td><td><a href="https://www.thefoodfoundry.com" target="_blank">thefoodfoundry.com</a></td></tr>
+        <tr><td>1871 Accelerator</td><td>Various fields — four cohorts per year</td><td><a href="https://1871.com" target="_blank">1871.com</a></td></tr>
+        <tr><td>Founders Institute</td><td>SaaS</td><td><a href="https://fi.co/chicago" target="_blank">fi.co/chicago</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- CO-WORKING -->
+<section id="coworking" style="background: var(--dark);">
+  <p class="section-label">06 — Space</p>
+  <h2 class="section-title">Co-Working Spaces</h2>
+  <p class="section-lead">43,000 people utilize co-working in Chicago — a number that has doubled in the past three years. Below are the primary options for those in tech.</p>
+
+  <div class="pill-list">
+    <a class="pill" href="https://www.mhubchicago.com" target="_blank">mHUB</a>
+    <a class="pill" href="https://theyard.com/locations/chicago" target="_blank">The Yard</a>
+    <a class="pill" href="https://www.workboxcompany.com" target="_blank">Workbox</a>
+    <a class="pill" href="https://density.ventures" target="_blank">Density</a>
+    <a class="pill" href="https://www.iwgplc.com" target="_blank">International Workplace Group (IWG)</a>
+    <a class="pill" href="https://workingfrom.thehoxton.com" target="_blank">Working From_</a>
+    <a class="pill" href="https://teamworking.vc" target="_blank">Team Working</a>
+    <a class="pill" href="https://www.deskpass.com" target="_blank">Deskpass</a>
+    <a class="pill" href="https://www.regus.com" target="_blank">Regus</a>
+    <a class="pill" href="https://www.industriousoffice.com" target="_blank">Industrious</a>
+    <a class="pill" href="https://1871.com" target="_blank">1871</a>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- EVENTS -->
+<section id="events" style="background: var(--mid);">
+  <p class="section-label">07 — What's On</p>
+  <h2 class="section-title">Events Around Chicago</h2>
+  <p class="section-lead">Two essential sources for staying plugged into the Chicago tech event calendar.</p>
+
+  <div class="card-grid" style="max-width: 600px;">
+    <div class="card">
+      <p class="card-name">Landon's Loop</p>
+      <p class="card-desc">A curated list of weekly tech events emailed every Monday morning. Never miss what's happening in Chicago's innovation scene.</p>
+      <a class="card-link" href="https://www.landonsloop.com" target="_blank">landonsloop.com</a>
+    </div>
+    <div class="card">
+      <p class="card-name">CHI IRL</p>
+      <p class="card-desc">Comprehensive city-wide calendar of in-person tech events across Chicago neighborhoods.</p>
+      <a class="card-link" href="https://chiirl.com" target="_blank">chiirl.com</a>
+    </div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- ECONOMIC DEV -->
+<section id="econdev" style="background: var(--dark);">
+  <p class="section-label">08 — Resources</p>
+  <h2 class="section-title">Economic Dev Resources</h2>
+  <p class="section-lead">Non-profit and government resources for founders in Chicago and Illinois.</p>
+
+  <p class="subhead">Organizations</p>
+  <div class="pill-list" style="margin-bottom: 3rem;">
+    <a class="pill" href="https://p33chicago.com" target="_blank">P33 Chicago</a>
+    <a class="pill" href="https://worldbusinesschicago.com" target="_blank">World Business Chicago</a>
+    <a class="pill" href="https://www.chicagoblend.org" target="_blank">Chicago Blend</a>
+    <a class="pill" href="https://gotechchicago.com/h1b/" target="_blank">H1B Visa Resources</a>
+    <a class="pill" href="https://gotechchicago.com/commonapp/" target="_blank">Techicago Common App</a>
+    <a class="pill" href="https://www.chicagolandchamber.org" target="_blank">Chicagoland Chamber of Commerce</a>
+    <a class="pill" href="https://ilchamber.org" target="_blank">Illinois Chamber of Commerce</a>
+  </div>
+
+  <p class="subhead">Startup Grants</p>
+  <div class="card-grid" style="max-width: 800px;">
+    <div class="card">
+      <p class="card-name">Illinois Angel Tax Credit</p>
+      <p class="card-desc">State tax credit for angel investors backing Illinois-based startups — a strong fundraising signal for founders.</p>
+      <a class="card-link" href="https://dceo.illinois.gov/expandrelocate/incentives/taxassistance/angelinvestment.html" target="_blank">dceo.illinois.gov</a>
+    </div>
+    <div class="card">
+      <p class="card-name">SBIR / STTR Program</p>
+      <p class="card-desc">Federal non-dilutive grant programs for small businesses doing R&amp;D. Competitive but highly valuable.</p>
+      <a class="card-link" href="https://www.sbir.gov/about" target="_blank">sbir.gov</a>
+    </div>
+    <div class="card">
+      <p class="card-name">DCEO Grant Opportunities</p>
+      <p class="card-desc">Illinois Department of Commerce grant programs spanning multiple industries and stages.</p>
+      <a class="card-link" href="https://dceo.illinois.gov/aboutdceo/grantopportunities/grants.html" target="_blank">dceo.illinois.gov</a>
+    </div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- HIRING -->
+<section id="hiring" style="background: var(--mid);">
+  <p class="section-label">09 — Talent</p>
+  <h2 class="section-title">Hiring in Chicago</h2>
+  <p class="section-lead">Chicago is a major talent hub for the entire Midwest — 80% of Midwest graduates end up here post-graduation. Below are recruiting firms, job boards, and universities to tap.</p>
+
+  <p class="subhead">Recruiting Firms</p>
+  <div class="pill-list" style="margin-bottom: 3rem;">
+    <a class="pill" href="https://www.huntclub.com" target="_blank">Hunt Club</a>
+    <a class="pill" href="https://hirewell.com" target="_blank">Hirewell</a>
+    <a class="pill" href="https://www.omnasearch.com" target="_blank">Omna Search</a>
+    <a class="pill" href="https://victorylap.io" target="_blank">Victory Lap</a>
+    <a class="pill" href="https://hirexhire.com" target="_blank">HireHex</a>
+    <a class="pill" href="https://artisantalent.com" target="_blank">Artisan Talent</a>
+    <a class="pill" href="https://hrhints.io" target="_blank">HR Hints</a>
+  </div>
+
+  <p class="subhead">Job Boards</p>
+  <div class="pill-list" style="margin-bottom: 3rem;">
+    <a class="pill" href="https://wellfound.com/location/chicago" target="_blank">Wellfound</a>
+    <a class="pill" href="https://jobs.gotechchicago.com/jobs" target="_blank">Techicago Job Board</a>
+    <a class="pill" href="https://1871.com/jobs/" target="_blank">1871 Job Board</a>
+    <a class="pill" href="https://builtin.com/jobs/chicago" target="_blank">BuiltIn Chicago</a>
+    <a class="pill" href="https://www.ycombinator.com/jobs/location/chicago" target="_blank">YC Chicago Jobs</a>
+  </div>
+
+  <p class="subhead">Local Universities with Tech Talent</p>
+  <div class="inventions-row" style="max-width: 700px;">
+    <div class="invention-pill">University of Illinois Urbana-Champaign</div>
+    <div class="invention-pill">Northwestern University</div>
+    <div class="invention-pill">University of Chicago</div>
+    <div class="invention-pill">Illinois Tech</div>
+    <div class="invention-pill">DePaul University</div>
+    <div class="invention-pill">Loyola University</div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- MEDIA -->
+<section id="media" style="background: var(--dark);">
+  <p class="section-label">10 — Stay Informed</p>
+  <h2 class="section-title">Chicago Tech Media</h2>
+  <p class="section-lead">Newsletters and podcasts to keep you plugged into the Chicago innovation scene.</p>
+
+  <p class="subhead">Newsletters 📩</p>
+  <div class="media-grid" style="margin-bottom: 2px;">
+    <div class="media-item"><span class="media-icon">📩</span><a href="http://landonsloop.com" target="_blank">Landon's Loop</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://www.start-midwest.com" target="_blank">StartMidwest</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://www.bizjournals.com/chicago/inno/newsletter" target="_blank">Chicago Inno — The Beat</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://www.axios.com/local/chicago" target="_blank">Axios Chicago</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://www.chicagobusiness.com/topic/daily-alert" target="_blank">Crain's Daily Alert</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://midweststartups.beehiiv.com" target="_blank">Midwest Startups</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://substack.com/@risechicago" target="_blank">Rise Chicago</a></div>
+    <div class="media-item"><span class="media-icon">📩</span><a href="https://www.freaktakes.com" target="_blank">FreakTakes</a></div>
+  </div>
+
+  <p class="subhead" style="margin-top:3rem;">Podcasts 🎧</p>
+  <div class="media-grid">
+    <div class="media-item"><span class="media-icon">🎧</span><a href="https://fullratchet.net" target="_blank">The Full Ratchet</a></div>
+    <div class="media-item"><span class="media-icon">🎧</span><a href="https://podcasts.apple.com/us/podcast/technori/id1037498205" target="_blank">TechNori</a></div>
+    <div class="media-item"><span class="media-icon">🎧</span><a href="https://www.chicagobusiness.com/crains-daily-gist" target="_blank">Crain's Daily Gist</a></div>
+    <div class="media-item"><span class="media-icon">🎧</span><a href="https://podcasts.apple.com/us/podcast/inside-the-loop/id1659116565" target="_blank">Inside the Loop</a></div>
+    <div class="media-item"><span class="media-icon">🎧</span><a href="https://www.intheir20s.com" target="_blank">inTheir20s</a></div>
+    <div class="media-item"><span class="media-icon">🎧</span><a href="https://podcasts.apple.com/us/podcast/landon-campbell-on-being-a-vc-at-24-bringing-more/id1317620369?i=1000591244745" target="_blank">The Intersection</a></div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- RESEARCH -->
+<section id="research" style="background: var(--mid);">
+  <p class="section-label">11 — Data</p>
+  <h2 class="section-title">Innovation Reports &amp; Research</h2>
+  <p class="section-lead">Primary sources and data for understanding Chicago's innovation economy.</p>
+
+  <div class="card-grid" style="max-width: 900px;">
+    <div class="card">
+      <p class="card-name">CooleyGO Financial Trends</p>
+      <p class="card-desc">Real-time VC deal term data and financial benchmarks.</p>
+      <a class="card-link" href="https://www.cooleygo.com/data/" target="_blank">cooleygo.com</a>
+    </div>
+    <div class="card">
+      <p class="card-name">DCEO Data Center Report</p>
+      <p class="card-desc">Illinois data center landscape and investment trends from the state's economic agency.</p>
+      <a class="card-link" href="https://dceo.illinois.gov/content/dam/soi/en/web/dceo/aboutdceo/reportsrequiredbystatute/2023-data-centers-annual-report.pdf" target="_blank">dceo.illinois.gov</a>
+    </div>
+    <div class="card">
+      <p class="card-name">World Business Chicago Research Center</p>
+      <p class="card-desc">Economic research on Chicago's industry sectors and investment climate.</p>
+      <a class="card-link" href="https://worldbusinesschicago.com/the-research-center/" target="_blank">worldbusinesschicago.com</a>
+    </div>
+    <div class="card">
+      <p class="card-name">Chicago Blend Startup Diversity Report</p>
+      <p class="card-desc">Data on diversity across the Chicago startup ecosystem.</p>
+      <a class="card-link" href="https://www.chicagoblend.org/data" target="_blank">chicagoblend.org</a>
+    </div>
+    <div class="card">
+      <p class="card-name">Chicago Data Portal</p>
+      <p class="card-desc">Official city data across economic, geographic, and demographic dimensions.</p>
+      <a class="card-link" href="https://data.cityofchicago.org" target="_blank">data.cityofchicago.org</a>
+    </div>
+    <div class="card">
+      <p class="card-name">Intersect Illinois 2024 Report</p>
+      <p class="card-desc">Annual report on Illinois innovation, investment, and technology ecosystem.</p>
+      <a class="card-link" href="https://www.intersectillinois.org/annual-report-2024/" target="_blank">intersectillinois.org</a>
+    </div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- PEOPLE TO FOLLOW -->
+<section id="people" style="background: var(--dark);">
+  <p class="section-label">12 — Voices</p>
+  <h2 class="section-title">Chicagoans in Tech to Follow</h2>
+  <p class="section-lead">The builders, investors, and operators shaping Chicago's tech scene. Worth following.</p>
+
+  <div class="people-grid">
+    <div class="person-item"><a href="https://twitter.com/landon20s" target="_blank">Landon Campbell</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/kuriakoseabin/" target="_blank">Abin Kuriakose</a></div>
+    <div class="person-item"><a href="https://worldbusinesschicago.com/allpeople/robin-ficke/" target="_blank">Robin Ficke</a></div>
+    <div class="person-item"><a href="https://x.com/JennyGooz" target="_blank">Jenny Guzman</a></div>
+    <div class="person-item"><a href="https://x.com/energybants" target="_blank">Mark Nelson</a></div>
+    <div class="person-item"><a href="https://x.com/madihilly" target="_blank">Madi Hilly</a></div>
+    <div class="person-item"><a href="https://x.com/StuLoren" target="_blank">Stuart Loren</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/brennan-m-woodruff/" target="_blank">Brennan M. Woodruff</a></div>
+    <div class="person-item"><a href="https://twitter.com/AJManaseer" target="_blank">AJ Manaseer</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/elliebahrmasel/" target="_blank">Ellie Bahrmasel</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/michaelfassnacht/" target="_blank">Michael Fassnacht</a></div>
+    <div class="person-item"><a href="https://x.com/austin__berg" target="_blank">Austin Berg</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/shaynaharris/" target="_blank">Shayna Harris</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/tonycoglianese/" target="_blank">Tony Coglianese</a></div>
+    <div class="person-item"><a href="https://twitter.com/Stealx" target="_blank">Iman Jalali</a></div>
+    <div class="person-item"><a href="https://twitter.com/galeforceVC" target="_blank">Gale Wilkinson</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/claude-cimeus-37550874/" target="_blank">Claude Cimeus</a></div>
+    <div class="person-item"><a href="https://twitter.com/minc798" target="_blank">B Talent</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/kathrynfinney/" target="_blank">Kathryn Finney</a></div>
+    <div class="person-item"><a href="https://www.linkedin.com/in/cdeutsch/" target="_blank">Chris Deutsch</a></div>
+  </div>
+
+  <a href="#top" class="back-to-top">↑ Back to top</a>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div>
+    <h2>Stay in the Loop</h2>
+    <p>Weekly insights on Chicago's innovation economy — events, deals, people, and opportunities — delivered every Monday morning.</p>
+  </div>
+  <div class="cta-links">
+    <a href="https://www.landonsloop.com" target="_blank" class="btn-primary" style="background:white;color:var(--chicago-blue);">Subscribe to Landon's Loop</a>
+    <a href="mailto:landon@drivecapital.com" style="color:var(--chicago-red);text-decoration:none">landon@drivecapital.com</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <p class="footer-brand">Chicago Tech Navigator</p>
+  </div>
+  <div style="text-align:right;">
+    <p>By Landon W. Campbell — Drive Capital</p>
+    <p style="margin-top:0.3rem;">Last Updated: Mar 2026 &nbsp;✶&nbsp; <a href="https://twitter.com/landon20s" target="_blank" style="color:var(--muted);text-decoration:none;">@landon20s</a></p>
+  </div>
+</footer>
+
+<script>
+  function filterTable(tableId, query) {
+    var table = document.getElementById(tableId);
+    if (!table) return;
+    var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    var q = query.toLowerCase();
+    for (var i = 0; i < rows.length; i++) {
+      var text = rows[i].textContent || rows[i].innerText;
+      rows[i].style.display = text.toLowerCase().indexOf(q) > -1 ? '' : 'none';
+    }
+  }
+</script>
+
+</body>
+</html>
